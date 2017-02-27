@@ -1,61 +1,152 @@
-<?php
-//Include GP config file && User class
-include_once 'gpConfig.php';
-include_once 'User.php';
+<!DOCTYPE html>
+<html lang="en">
 
-if(isset($_GET['code'])){
-    $gClient->authenticate($_GET['code']);
-    $_SESSION['token'] = $gClient->getAccessToken();
-    header('Location: ' . filter_var($redirectURL, FILTER_SANITIZE_URL));
-}
+    <head>
 
-if (isset($_SESSION['token'])) {
-    $gClient->setAccessToken($_SESSION['token']);
-}
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Vinyl Swap</title>
 
-if ($gClient->getAccessToken()) {
-    //Get user profile data from google
-    $gpUserProfile = $google_oauthV2->userinfo->get();
-    
-    //Initialize User class
-    $user = new User();
-    
-    //Insert or update user data to the database
-    $gpUserData = array(
-        'oauth_provider'=> 'google',
-        'oauth_uid'     => $gpUserProfile['id'],
-        'first_name'    => $gpUserProfile['given_name'],
-        'last_name'     => $gpUserProfile['family_name'],
-        'email'         => $gpUserProfile['email'],
-        'gender'        => $gpUserProfile['gender'],
-        'locale'        => $gpUserProfile['locale'],
-        'picture'       => $gpUserProfile['picture'],
-        'link'          => $gpUserProfile['link']
-    );
-    $userData = $user->checkUser($gpUserData);
-    
-    //Storing user data into session
-    $_SESSION['userData'] = $userData;
-    
-    //Render facebook profile data
-    if(!empty($userData)){
-        $output = '<h1>Google+ Profile Details </h1>';
-        $output .= '<img src="'.$userData['picture'].'" width="300" height="220">';
-        $output .= '<br/>Google ID : ' . $userData['oauth_uid'];
-        $output .= '<br/>Name : ' . $userData['first_name'].' '.$userData['last_name'];
-        $output .= '<br/>Email : ' . $userData['email'];
-        $output .= '<br/>Gender : ' . $userData['gender'];
-        $output .= '<br/>Locale : ' . $userData['locale'];
-        $output .= '<br/>Logged in with : Google';
-        $output .= '<br/><a href="'.$userData['link'].'" target="_blank">Click to Visit Google+ Page</a>';
-        $output .= '<br/>Logout from <a href="logout.php">Google</a>'; 
-    }else{
-        $output = '<h3 style="color:red">Some problem occurred, please try again.</h3>';
-    }
-} else {
-    $authUrl = $gClient->createAuthUrl();
-    $output = '<a href="'.filter_var($authUrl, FILTER_SANITIZE_URL).'"><img src="images/glogin.png" alt=""/></a>';
-}
-?>
+        <!-- CSS -->
+        <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:400,100,300,500">
+        <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+        <link rel="stylesheet" href="assets/font-awesome/css/font-awesome.min.css">
+		<link rel="stylesheet" href="assets/css/form-elements.css">
+        <link rel="stylesheet" href="assets/css/style.css">
 
-<div><?php echo $output; ?></div>
+        <!-- Favicon and touch icons -->
+        <link rel="shortcut icon" href="favicon.ico">
+        
+    </head>
+
+    <body>
+
+        <!-- Top content -->
+        <div class="top-content">
+        	
+            <div class="inner-bg">
+                <div class="container">
+                	
+                    <div class="row">
+                        <div class="col-sm-8 col-sm-offset-2 text">
+                            <h1>Vinyl Swap</h1>
+                            <div class="description">
+                            	<p>
+	                          		Vinyl Swap is a community-driven, vinyl trading site! Browse what people have to trade, or make your own offers! Create an account or login below to get started swapping. 
+                            	</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-sm-5">
+                        	
+                        	<div class="form-box">
+	                        	<div class="form-top">
+	                        		<div class="form-top-left">
+	                        			<h3>Login to our site</h3>
+	                            		<p>Enter username and password to log on:</p>
+	                        		</div>
+	                        		<div class="form-top-right">
+	                        			<i class="fa fa-key"></i>
+	                        		</div>
+	                            </div>
+	                            <div class="form-bottom">
+				                    <form role="form" action="" method="post" class="login-form">
+				                    	<div class="form-group">
+				                    		<label class="sr-only" for="form-username">Username</label>
+				                        	<input type="text" name="form-username" placeholder="Username..." class="form-username form-control" id="form-username">
+				                        </div>
+				                        <div class="form-group">
+				                        	<label class="sr-only" for="form-password">Password</label>
+				                        	<input type="password" name="form-password" placeholder="Password..." class="form-password form-control" id="form-password">
+				                        </div>
+				                        <button type="submit" class="btn">Sign in!</button>
+				                    </form>
+			                    </div>
+		                    </div>
+		                
+		                	<div class="social-login">
+	                        	<h3>...or login with:</h3>
+	                        	<div class="social-login-buttons">
+		                        	<a class="btn btn-link-1 btn-link-1-facebook" href="#">
+		                        		<i class="fa fa-facebook"></i> Facebook
+		                        	</a>
+		                        	<!--   <a class="btn btn-link-1 btn-link-1-twitter" href="#">
+		                        		<i class="fa fa-twitter"></i> Twitter
+		                        	</a>   -->
+		                        	<a class="btn btn-link-1 btn-link-1-google-plus" href="#">
+		                        		<i class="fa fa-google-plus"></i> Gmail
+		                        	</a>
+	                        	</div>
+	                        </div>
+	                        
+                        </div>
+                        
+                        <div class="col-sm-1 middle-border"></div>
+                        <div class="col-sm-1"></div>
+                        	
+                        <div class="col-sm-5">
+                        	
+                        	<div class="form-box">
+                        		<div class="form-top">
+	                        		<div class="form-top-left">
+	                        			<h3>Sign up now</h3>
+	                            		<p>We just need a few things from you...</p>
+	                        		</div>
+	                        		<div class="form-top-right">
+	                        			<i class="fa fa-pencil"></i>
+	                        		</div>
+	                            </div>
+	                            <div class="form-bottom">
+				                    <form role="form" action="" method="post" class="registration-form">       
+				                    	<div class="form-group">
+				                    		<label class="sr-only" for="form-first-name">First name</label>
+				                        	<input type="text" name="form-first-name" placeholder="First name..." class="form-first-name form-control" id="form-first-name">
+				                        </div>
+				                        <div class="form-group">
+				                        	<label class="sr-only" for="form-last-name">Last name</label>
+				                        	<input type="text" name="form-last-name" placeholder="Last name..." class="form-last-name form-control" id="form-last-name">
+				                        </div>
+				                        <div class="form-group">
+				                        	<label class="sr-only" for="form-email">Email</label>
+				                        	<input type="text" name="form-email" placeholder="Email..." class="form-email form-control" id="form-email">
+				                        </div>
+				                        <div class="form-group">
+				                        	<label class="sr-only" for="form-email">Username</label>
+				                        	<input type="text" name="form-email" placeholder="Desired username..." class="form-username form-control" id="username">
+				                        </div>
+				                        <button type="submit" class="btn">Sign me up!</button>
+				                    </form>
+			                    </div>
+                        	</div>
+                        	
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+            
+        </div>
+
+        <!-- Footer -->
+        <footer>
+        	<div class="container">
+        		<div class="row">
+        			
+        			<div class="col-sm-8 col-sm-offset-2">
+        				<div class="footer-border"></div>
+        				<p>Vinyl Swap <i class="fa fa-smile-o"></i></p>
+        			</div>
+        			
+        		</div>
+        	</div>
+        </footer>
+
+        <!-- Javascript -->
+        <script src="assets/js/jquery-1.11.1.min.js"></script>
+        <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+        <script src="assets/js/scripts.js"></script>
+    </body>
+</html>
